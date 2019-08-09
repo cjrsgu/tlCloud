@@ -9,6 +9,7 @@
     "start": "node src/index.js"
   },
   "dependencies": {
+    "dotenv": "^8.0.0",
     "ffi-napi": "^2.4.5",
     "ref-napi": "^1.4.1"
   },

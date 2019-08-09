@@ -1,1 +1,3 @@
 **/node_modules
+/tdlib
+.env
