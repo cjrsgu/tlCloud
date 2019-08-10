@@ -1,54 +1,80 @@
 /* eslint-disable default-case */
-import EventEmitter from 'events';
+import readlineLib from 'readline';
 import Client from './Client';
 
+const readline = readlineLib.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
 class App {
-  constructor() {
-    this.emitter = new EventEmitter();
-    this.client = new Client();
-    this.isRunning = false;
+  constructor(controller) {
+    this.client = new Client(controller);
   }
 
-  on(event, callback) {
-    this.emitter.on(event, callback);
-  }
-
-  send(obj) {
-    this.client.send(obj);
+  auth = (event) => {
+    switch (event['@type']) {
+      case 'authorizationStateClosed':
+        break;
+      case 'authorizationStateClosing':
+        break;
+      case 'authorizationStateLoggingOut':
+        break;
+      case 'authorizationStateReady':
+        break;
+      case 'authorizationStateWaitCode': {
+        readline.question("What's your code?", (code) => {
+          this.client.checkAuthenticationCode(code);
+          readline.close();
+        });
+        break;
+      }
+      case 'authorizationStateWaitEncryptionKey': {
+        this.client.setDatabaseEncryptionKey(process.env.ENCRIPTION_KEY);
+        break;
+      }
+      case 'authorizationStateWaitPassword': {
+        readline.question("What's your password?", (password) => {
+          this.client.checkAuthenticationPassword(password);
+          readline.close();
+        });
+        break;
+      }
+      case 'authorizationStateWaitPhoneNumber': {
+        readline.question("What's your phone number?", (phoneNumber) => {
+          this.client.setAuthenticationPhoneNumber(phoneNumber);
+          readline.close();
+        });
+        break;
+      }
+      case 'authorizationStateWaitTdlibParameters': {
+        this.client.setTdlibParameters({
+          database_directory: 'tdlib',
+          use_test_dc: true,
+          use_message_database: true,
+          use_secret_chats: true,
+          api_id: process.env.API_ID,
+          api_hash: process.env.API_HASH,
+          system_language_code: 'en',
+          device_model: 'tlCloud',
+          system_version: 'Windows',
+          application_version: '0.0.1',
+          enable_storage_optimizer: true,
+        });
+        break;
+      }
+    }
   };
 
-  start() {
-    this.isRunning = true;
-    this.startEventCycle();
-  }
-
-  stop() {
-    this.isRunning = false;
-    this.client.destroy();
-  }
-
-  startEventCycle() {
-    while (this.isRunning) {
-      const event = this.client.receive();
-
-      if (event) {
-        switch (event['@type']) {
-          case 'updateConnectionState': {
-            const connectionState = event.state;
-
-            this.emitter.emit(connectionState['@type']);
-            break;
-          }
-          case 'updateAuthorizationState': {
-            const authState = event.authorization_state;
-
-            this.emitter.emit(authState['@type']);
-            break;
-          }
+  receiveResponse = (response) => {
+    if (response) {
+      switch (response['@type']) {
+        case 'updateAuthorizationState': {
+          this.auth(response.authorization_state);
         }
       }
     }
-  }
+  };
 }
 
 export default App;

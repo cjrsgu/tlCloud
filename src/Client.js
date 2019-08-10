@@ -1,55 +1,62 @@
-import ffi from 'ffi-napi';
-import ref from 'ref-napi';
-import path from 'path';
-
 class Client {
-  constructor() {
-    Client.addDllPath();
-    this.tdlib = Client.configureTdlib();
-    this.client = this.createClient();
+  constructor(controller) {
+    this.controller = controller;
+    this.controller.enableLogFile();
   }
 
-  static configureTdlib() {
-    return ffi.Library('tdjson', {
-      td_json_client_create: ['pointer', []],
-      td_json_client_send: ['void', ['pointer', 'string']],
-      td_json_client_receive: ['string', ['pointer', 'double']],
-      td_json_client_execute: ['string', ['pointer', 'string']],
-      td_json_client_destroy: ['void', ['pointer']],
+  setAuthenticationPhoneNumber(phoneNumber) {
+    this.phoneNumber = phoneNumber;
+    this.controller.send({
+      '@type': 'setAuthenticationPhoneNumber',
+      phone_number: this.phoneNumber,
     });
   }
 
-  static buildQuery(query) {
-    const buffer = Buffer.from(`${JSON.stringify(query)}\0`, 'utf-8');
-    buffer.type = ref.types.CString;
-    return buffer;
+  checkAuthenticationPassword(password) {
+    this.controller.send({
+      '@type': 'checkAuthenticationPassword',
+      password,
+    });
   }
 
-  static addDllPath() {
-    const dllPath = path.join(__dirname, '/tdlibdll');
-    process.env.PATH = `${process.env.PATH};${dllPath}`;
+  /**
+    https://core.telegram.org/tdlib/docs/classtd_1_1td__api_1_1tdlib_parameters.html
+
+    bool use_test_dc,
+    string database_directory,
+    string files_directory,
+    bool use_file_database,
+    bool use_chat_info_database,
+    bool use_message_database,
+    bool use_secret_chats,
+    num api_id,
+    string api_hash,
+    string system_language_code,
+    string device_model,
+    string system_version,
+    string application_version,
+    bool enable_storage_optimizer,
+    bool ignore_file_names
+  */
+  setTdlibParameters(parameters) {
+    this.controller.send({
+      '@type': 'setTdlibParameters',
+      parameters,
+    });
   }
 
-  createClient() {
-    return this.tdlib.td_json_client_create();
+  setDatabaseEncryptionKey(encryptionKey) {
+    this.controller.send({
+      '@type': 'setDatabaseEncryptionKey',
+      new_encryption_key_: encryptionKey,
+    });
   }
 
-  send(query) {
-    this.tdlib.td_json_client_send(this.client, Client.buildQuery(query));
-  }
-
-  execute(query) {
-    return JSON.parse(this.tdlib.td_json_client_execute(this.client, Client.buildQuery(query)));
-  }
-
-  receive() {
-    const timeout = 2;
-
-    return JSON.parse(this.tdlib.td_json_client_receive(this.client, timeout));
-  }
-
-  destroy() {
-    this.tdlib.td_json_client_destroy(this.client);
+  checkAuthenticationCode(code) {
+    this.controller.send({
+      '@type': 'checkAuthenticationCode',
+      code,
+    });
   }
 }
 
