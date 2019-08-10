@@ -1,4 +1,5 @@
 /* eslint-disable default-case */
+import path from 'path';
 import readline from 'readline';
 
 class App {
@@ -10,6 +11,7 @@ class App {
       input: process.stdin,
       output: process.stdout,
     });
+    this.isAuthorizationStateReady = false;
   }
 
   auth = (event) => {
@@ -21,6 +23,36 @@ class App {
       case 'authorizationStateLoggingOut':
         break;
       case 'authorizationStateReady':
+        this.isAuthorizationStateReady = true;
+        // this.client.createNewSupergroupChat('test', true, 'example');
+        // this.client.getChats();
+        // this.client.getGroupsInCommon(372112, 0, 10);
+        // this.client.getChat(-1000010639255);
+        // this.client.downloadFile(1, 25, 0, 0, false);
+        // this.client.getRemoteFile('BQADAgADAQADZDN5StcQNU93kiXgAg', this.client.fileTypeDocument);
+        // this.client.uploadFile(
+        //   this.client.inputFileLocal(path.join(__dirname, '../logs.log.old')),
+        //   this.client.fileTypeDocument,
+        //   15,
+        // );
+        // this.client.sendMessage(
+        //   -1000010639255,
+        //   0,
+        //   false,
+        //   false,
+        //   this.client.inputMessageText(this.client.formattedText('teest message', null)),
+        // );
+        // this.client.sendMessage(
+        //   -1000010639255,
+        //   0,
+        //   false,
+        //   false,
+        //   this.client.inputMessageDocument(
+        //     this.client.inputFileLocal(path.join(__dirname, '../logs.log.old')),
+        //     null,
+        //     this.client.formattedText('filllleleeee', null),
+        //   ),
+        // );
         break;
       case 'authorizationStateWaitCode': {
         this.readline.question("What's your code?", (code) => {
@@ -51,19 +83,21 @@ class App {
         break;
       }
       case 'authorizationStateWaitTdlibParameters': {
-        this.client.setTdlibParameters(JSON.stringify({
-          use_test_dc: true,
-          database_directory: 'tdlib',
-          use_message_database: true,
-          use_secret_chats: true,
-          api_id: process.env.API_ID,
-          api_hash: process.env.API_HASH,
-          system_language_code: 'en',
-          device_model: 'tlCloud',
-          system_version: 'Windows',
-          application_version: '1.0',
-          enable_storage_optimizer: true,
-        }));
+        this.client.setTdlibParameters(
+          JSON.stringify({
+            use_test_dc: true,
+            database_directory: 'tdlib',
+            use_message_database: true,
+            use_secret_chats: true,
+            api_id: process.env.API_ID,
+            api_hash: process.env.API_HASH,
+            system_language_code: 'en',
+            device_model: 'tlCloud',
+            system_version: 'Windows',
+            application_version: '1.0',
+            enable_storage_optimizer: true,
+          }),
+        );
         break;
       }
     }
@@ -71,9 +105,33 @@ class App {
 
   receiveResponse = (response) => {
     if (response) {
+      console.log(response['@type']);
       switch (response['@type']) {
         case 'updateAuthorizationState': {
           this.auth(response.authorization_state);
+          break;
+        }
+        case 'error': {
+          console.log(response.message);
+          break;
+        }
+        case 'chats': {
+          console.log(response.chat_ids);
+          break;
+        }
+        case 'chat': {
+          console.log(response);
+          console.log(JSON.stringify(response));
+          // console.log(response);
+          break;
+        }
+        case 'message': {
+          console.log(response.content);
+          break;
+        }
+        case 'file': {
+          console.log(response);
+          console.log(JSON.stringify(response));
           break;
         }
       }

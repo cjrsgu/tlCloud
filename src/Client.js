@@ -51,7 +51,7 @@ class Client {
     });
   }
 
-  checkAuthenticationCode(code, firstName=undefined, lastName=undefined) {
+  checkAuthenticationCode(code, firstName = undefined, lastName = undefined) {
     this.worker.send({
       '@type': 'checkAuthenticationCode',
       code,
@@ -72,12 +72,111 @@ class Client {
     });
   }
 
-  getChats() {
+  getChats(offsetOrder, offsetChatId, limit) {
     this.worker.send({
       '@type': 'getChats',
-      offset_order: 0,
-      offset_chat_id: 2 ** 60,
-      limit: 50,
+      offset_order: offsetOrder,
+      offset_chat_id: offsetChatId,
+      limit,
+    });
+  }
+
+  createNewSupergroupChat(title, isCannel, description) {
+    this.worker.send({
+      '@type': 'createNewSupergroupChat',
+      title,
+      is_cannel: isCannel,
+      description,
+    });
+  }
+
+  getGroupsInCommon(userId, offsetChatId, limit) {
+    this.worker.send({
+      '@type': 'getGroupsInCommon',
+      user_id: userId,
+      offset_chat_id: offsetChatId,
+      limit,
+    });
+  }
+
+  formattedText = (text, entities) => ({
+    '@type': 'formattedText',
+    text,
+    entities,
+  });
+
+  inputMessageText = (text, disableWebPagePreview = false, clearDraft = false) => ({
+    '@type': 'inputMessageText',
+    text,
+    disable_web_page_preview: disableWebPagePreview,
+    clear_draft: clearDraft,
+  });
+
+  inputMessageDocument = (document, thumbnail, caption) => ({
+    '@type': 'inputMessageDocument',
+    document,
+    thumbnail,
+    caption,
+  });
+
+  sendMessage(chatId, replyToMessageId, disableNotification, fromBackground, inputMessageContent) {
+    this.worker.send({
+      '@type': 'sendMessage',
+      chat_id: chatId,
+      reply_to_message_id: replyToMessageId,
+      disable_notification: disableNotification,
+      from_background: fromBackground,
+      input_message_content: inputMessageContent,
+    });
+  }
+
+  uploadFile(file, fileType, priority) {
+    this.worker.send({
+      '@type': 'uploadFile',
+      file,
+      file_type: fileType,
+      priority,
+    });
+  }
+
+  inputFileLocal = path => ({
+    '@type': 'inputFileLocal',
+    path,
+  });
+
+  fileTypeDocument = () => ({
+    '@type': 'fileTypeDocument',
+  });
+
+  destroy() {
+    this.worker.send({
+      '@type': 'destroy',
+    });
+  }
+
+  getChat(catId) {
+    this.worker.send({
+      '@type': 'getChat',
+      chat_id: catId,
+    });
+  }
+
+  downloadFile(fileId, priority, offset, limit, synchronous) {
+    this.worker.send({
+      '@type': 'downloadFile',
+      file_id: fileId,
+      priority,
+      offset,
+      limit,
+      synchronous,
+    });
+  }
+
+  getRemoteFile(remoteFileId, fileType) {
+    this.worker.send({
+      '@type': 'getRemoteFile',
+      remote_file_id: remoteFileId,
+      file_type: fileType,
     });
   }
 }

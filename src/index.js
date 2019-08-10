@@ -10,8 +10,10 @@ if (cluster.isMaster) {
   const app = new App(client, worker);
 
   // start
-  worker.send('');
-
+  // worker.send('');
+  setInterval(() => {
+    worker.send('');
+  }, 15000);
   worker.on('message', (response) => {
     if (response) {
       worker.send('');
