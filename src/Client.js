@@ -1,6 +1,6 @@
-const ffi = require('ffi-napi');
-const ref = require('ref-napi');
-const path = require('path');
+import ffi from 'ffi-napi';
+import ref from 'ref-napi';
+import path from 'path';
 
 class Client {
   constructor() {
@@ -10,16 +10,13 @@ class Client {
   }
 
   static configureTdlib() {
-    return ffi.Library(
-      'tdjson',
-      {
-        td_json_client_create: ['pointer', []],
-        td_json_client_send: ['void', ['pointer', 'string']],
-        td_json_client_receive: ['string', ['pointer', 'double']],
-        td_json_client_execute: ['string', ['pointer', 'string']],
-        td_json_client_destroy: ['void', ['pointer']],
-      },
-    );
+    return ffi.Library('tdjson', {
+      td_json_client_create: ['pointer', []],
+      td_json_client_send: ['void', ['pointer', 'string']],
+      td_json_client_receive: ['string', ['pointer', 'double']],
+      td_json_client_execute: ['string', ['pointer', 'string']],
+      td_json_client_destroy: ['void', ['pointer']],
+    });
   }
 
   static buildQuery(query) {
@@ -31,7 +28,6 @@ class Client {
   static addDllPath() {
     const dllPath = path.join(__dirname, '/tdlibdll');
     process.env.PATH = `${process.env.PATH};${dllPath}`;
-    console.log(process.env.PATH);
   }
 
   createClient() {
@@ -43,17 +39,13 @@ class Client {
   }
 
   execute(query) {
-    return JSON.parse(
-      this.tdlib.td_json_client_execute(this.client, Client.buildQuery(query)),
-    );
+    return JSON.parse(this.tdlib.td_json_client_execute(this.client, Client.buildQuery(query)));
   }
 
   receive() {
     const timeout = 2;
 
-    return JSON.parse(
-      this.tdlib.td_json_client_receive(this.client, timeout),
-    );
+    return JSON.parse(this.tdlib.td_json_client_receive(this.client, timeout));
   }
 
   destroy() {
@@ -61,4 +53,4 @@ class Client {
   }
 }
 
-module.exports = Client;
+export default Client;

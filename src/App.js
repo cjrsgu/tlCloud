@@ -1,8 +1,6 @@
 /* eslint-disable default-case */
-
-const EventEmitter = require('events');
-
-const Client = require('./Client.js');
+import EventEmitter from 'events';
+import Client from './Client';
 
 class App {
   constructor() {
@@ -17,7 +15,7 @@ class App {
 
   send(obj) {
     this.client.send(obj);
-  }
+  };
 
   start() {
     this.isRunning = true;
@@ -53,4 +51,4 @@ class App {
   }
 }
 
-module.exports = App;
+export default App;
