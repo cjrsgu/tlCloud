@@ -1,15 +1,15 @@
 /* eslint-disable default-case */
-import readlineLib from 'readline';
-import Client from './Client';
-
-const readline = readlineLib.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+import readline from 'readline';
 
 class App {
-  constructor(controller) {
-    this.client = new Client(controller);
+  constructor(client, worker) {
+    this.client = client;
+    this.worker = worker;
+    this.client.getAuthorizationState();
+    this.readline = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
   }
 
   auth = (event) => {
@@ -23,9 +23,10 @@ class App {
       case 'authorizationStateReady':
         break;
       case 'authorizationStateWaitCode': {
-        readline.question("What's your code?", (code) => {
+        this.readline.question("What's your code?", (code) => {
+          console.log('Your code:', code);
           this.client.checkAuthenticationCode(code);
-          readline.close();
+          this.readline.close();
         });
         break;
       }
@@ -34,23 +35,25 @@ class App {
         break;
       }
       case 'authorizationStateWaitPassword': {
-        readline.question("What's your password?", (password) => {
+        this.readline.question("What's your password?", (password) => {
+          console.log('Your password:', password);
           this.client.checkAuthenticationPassword(password);
-          readline.close();
+          this.readline.close();
         });
         break;
       }
       case 'authorizationStateWaitPhoneNumber': {
-        readline.question("What's your phone number?", (phoneNumber) => {
+        this.readline.question("What's your phone number?", (phoneNumber) => {
+          console.log('Your phone:', phoneNumber);
           this.client.setAuthenticationPhoneNumber(phoneNumber);
-          readline.close();
+          this.readline.close();
         });
         break;
       }
       case 'authorizationStateWaitTdlibParameters': {
-        this.client.setTdlibParameters({
-          database_directory: 'tdlib',
+        this.client.setTdlibParameters(JSON.stringify({
           use_test_dc: true,
+          database_directory: 'tdlib',
           use_message_database: true,
           use_secret_chats: true,
           api_id: process.env.API_ID,
@@ -58,9 +61,9 @@ class App {
           system_language_code: 'en',
           device_model: 'tlCloud',
           system_version: 'Windows',
-          application_version: '0.0.1',
+          application_version: '1.0',
           enable_storage_optimizer: true,
-        });
+        }));
         break;
       }
     }
@@ -71,6 +74,7 @@ class App {
       switch (response['@type']) {
         case 'updateAuthorizationState': {
           this.auth(response.authorization_state);
+          break;
         }
       }
     }

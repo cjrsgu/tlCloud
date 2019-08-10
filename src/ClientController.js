@@ -29,7 +29,7 @@ class ClientController {
   }
 
   buildQuery = (query) => {
-    const buffer = Buffer.from(`${JSON.stringify(query)}\0`, 'utf-8');
+    const buffer = Buffer.from(`${JSON.stringify(JSON.parse(query))}\0`, 'utf-8');
     buffer.type = ref.types.CString;
     return buffer;
   };
@@ -54,7 +54,7 @@ class ClientController {
   receive() {
     const timeout = 2;
 
-    return JSON.parse(this.tdlib.td_json_client_receive(this.client, timeout));
+    return this.tdlib.td_json_client_receive(this.client, timeout);
   }
 
   getTdJsonClientReceive() {
@@ -66,4 +66,4 @@ class ClientController {
   }
 }
 
-export default new ClientController();
+export default ClientController;

@@ -1,19 +1,18 @@
 class Client {
-  constructor(controller) {
-    this.controller = controller;
-    this.controller.enableLogFile();
+  constructor(worker) {
+    this.worker = worker;
+    this.canRefresh = true;
   }
 
   setAuthenticationPhoneNumber(phoneNumber) {
-    this.phoneNumber = phoneNumber;
-    this.controller.send({
+    this.worker.send({
       '@type': 'setAuthenticationPhoneNumber',
-      phone_number: this.phoneNumber,
+      phone_number: phoneNumber,
     });
   }
 
   checkAuthenticationPassword(password) {
-    this.controller.send({
+    this.worker.send({
       '@type': 'checkAuthenticationPassword',
       password,
     });
@@ -39,23 +38,46 @@ class Client {
     bool ignore_file_names
   */
   setTdlibParameters(parameters) {
-    this.controller.send({
+    this.worker.send({
       '@type': 'setTdlibParameters',
-      parameters,
+      parameters: JSON.parse(parameters),
     });
   }
 
   setDatabaseEncryptionKey(encryptionKey) {
-    this.controller.send({
+    this.worker.send({
       '@type': 'setDatabaseEncryptionKey',
       new_encryption_key_: encryptionKey,
     });
   }
 
-  checkAuthenticationCode(code) {
-    this.controller.send({
+  checkAuthenticationCode(code, firstName=undefined, lastName=undefined) {
+    this.worker.send({
       '@type': 'checkAuthenticationCode',
       code,
+      first_name: firstName,
+      last_name: lastName,
+    });
+  }
+
+  logOut() {
+    this.worker.send({
+      '@type': 'logOut',
+    });
+  }
+
+  getAuthorizationState() {
+    this.worker.send({
+      '@type': 'getAuthorizationState',
+    });
+  }
+
+  getChats() {
+    this.worker.send({
+      '@type': 'getChats',
+      offset_order: 0,
+      offset_chat_id: 2 ** 60,
+      limit: 50,
     });
   }
 }
