@@ -29,8 +29,9 @@ class Client {
   }
 
   static addDllPath() {
-    const dllPath = path.join(__dirname, '/tdlib');
+    const dllPath = path.join(__dirname, '/tdlibdll');
     process.env.PATH = `${process.env.PATH};${dllPath}`;
+    console.log(process.env.PATH);
   }
 
   createClient() {
