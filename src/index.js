@@ -1,5 +1,5 @@
-require('./bootstrap');
-const App = require('./App.js');
+import './bootstrap';
+import App from './App';
 
 const app = new App();
 
