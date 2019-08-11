@@ -1,5 +1,4 @@
 /* eslint-disable default-case */
-import path from 'path';
 import readline from 'readline';
 
 class App {
@@ -105,7 +104,7 @@ class App {
 
   receiveResponse = (response) => {
     if (response) {
-      console.log(response['@type']);
+      // console.log(response['@type']);
       switch (response['@type']) {
         case 'updateAuthorizationState': {
           this.auth(response.authorization_state);
@@ -116,22 +115,15 @@ class App {
           break;
         }
         case 'chats': {
-          console.log(response.chat_ids);
           break;
         }
         case 'chat': {
-          console.log(response);
-          console.log(JSON.stringify(response));
-          // console.log(response);
           break;
         }
         case 'message': {
-          console.log(response.content);
           break;
         }
         case 'file': {
-          console.log(response);
-          console.log(JSON.stringify(response));
           break;
         }
       }

@@ -1,7 +1,6 @@
 class Client {
   constructor(worker) {
     this.worker = worker;
-    this.canRefresh = true;
   }
 
   setAuthenticationPhoneNumber(phoneNumber) {

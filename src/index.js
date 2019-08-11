@@ -10,10 +10,6 @@ if (cluster.isMaster) {
   const app = new App(client, worker);
 
   // start
-  // worker.send('');
-  setInterval(() => {
-    worker.send('');
-  }, 15000);
   worker.on('message', (response) => {
     if (response) {
       worker.send('');
@@ -26,7 +22,7 @@ if (cluster.isMaster) {
 
   process.on('message', (query) => {
     if (query) controller.send(JSON.stringify(query));
-  
+
     process.send(controller.receive());
   });
 }
