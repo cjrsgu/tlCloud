@@ -24,8 +24,13 @@ class App {
       case 'authorizationStateReady':
         this.isAuthorizationStateReady = true;
         // this.client.createNewSupergroupChat('test', true, 'example');
-        // this.client.getChats();
+        // this.client.getChats(
+        //   '9223372036854775807',
+        //   '9223372036854775807',
+        //   100,
+        //   );
         // this.client.getGroupsInCommon(372112, 0, 10);
+        // this.client.createNewSupergroupChat('cloud14', true, 'cloud14')
         // this.client.getChat(-1000010639255);
         // this.client.downloadFile(1, 25, 0, 0, false);
         // this.client.getRemoteFile('BQADAgADAQADZDN5StcQNU93kiXgAg', this.client.fileTypeDocument);
@@ -84,7 +89,7 @@ class App {
       case 'authorizationStateWaitTdlibParameters': {
         this.client.setTdlibParameters(
           JSON.stringify({
-            use_test_dc: true,
+            use_test_dc: false,
             database_directory: 'tdlib',
             use_message_database: true,
             use_secret_chats: true,
@@ -115,6 +120,7 @@ class App {
           break;
         }
         case 'chats': {
+          console.log(response.chat_ids)
           break;
         }
         case 'chat': {

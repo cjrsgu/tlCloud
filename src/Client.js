@@ -80,11 +80,11 @@ class Client {
     });
   }
 
-  createNewSupergroupChat(title, isCannel, description) {
+  createNewSupergroupChat(title, isChannel, description) {
     this.worker.send({
       '@type': 'createNewSupergroupChat',
       title,
-      is_cannel: isCannel,
+      is_channel: isChannel,
       description,
     });
   }
