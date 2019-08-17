@@ -3,6 +3,10 @@ class Client {
     this.worker = worker;
   }
 
+  forceUpdate() {
+    this.worker.send('');
+  }
+
   setAuthenticationPhoneNumber(phoneNumber) {
     this.worker.send({
       '@type': 'setAuthenticationPhoneNumber',

@@ -1,5 +1,6 @@
-/* eslint-disable default-case */
 import readline from 'readline';
+
+import FileController from './FileController';
 
 class App {
   constructor(client, worker) {
@@ -11,6 +12,7 @@ class App {
       output: process.stdout,
     });
     this.isAuthorizationStateReady = false;
+    this.pathToFolder = '../cloud/';
   }
 
   auth = (event) => {
@@ -23,6 +25,17 @@ class App {
         break;
       case 'authorizationStateReady':
         this.isAuthorizationStateReady = true;
+        // this.readline.question("Enter path to folder: ", (path) => {
+        //   console.log('Your path:', path);
+        //   this.pathToFolder = path;
+        // });
+
+        // this.readline.question("Create new channel? y/n ", (answer) => {
+        //   if (answer === 'y') {
+        //     this.client.createNewSupergroupChat('cloud', true, 'cloud');
+        //   }
+        // });
+
         // this.client.createNewSupergroupChat('test', true, 'example');
         // this.client.getChats(
         //   '9223372036854775807',
@@ -59,10 +72,9 @@ class App {
         // );
         break;
       case 'authorizationStateWaitCode': {
-        this.readline.question("What's your code?", (code) => {
+        this.readline.question("What's your code?\n", (code) => {
           console.log('Your code:', code);
           this.client.checkAuthenticationCode(code);
-          this.readline.close();
         });
         break;
       }
@@ -71,18 +83,16 @@ class App {
         break;
       }
       case 'authorizationStateWaitPassword': {
-        this.readline.question("What's your password?", (password) => {
+        this.readline.question("What's your password?\n", (password) => {
           console.log('Your password:', password);
           this.client.checkAuthenticationPassword(password);
-          this.readline.close();
         });
         break;
       }
       case 'authorizationStateWaitPhoneNumber': {
-        this.readline.question("What's your phone number?", (phoneNumber) => {
+        this.readline.question("What's your phone number?\n", (phoneNumber) => {
           console.log('Your phone:', phoneNumber);
           this.client.setAuthenticationPhoneNumber(phoneNumber);
-          this.readline.close();
         });
         break;
       }
@@ -109,6 +119,7 @@ class App {
 
   receiveResponse = (response) => {
     if (response) {
+      this.client.forceUpdate();
       // console.log(response['@type']);
       switch (response['@type']) {
         case 'updateAuthorizationState': {
@@ -130,6 +141,23 @@ class App {
           break;
         }
         case 'file': {
+          break;
+        }
+        case 'updates': {
+          break;
+        }
+        case 'updateNewChat': {
+          if (response.chat === 'cloud') {
+            this.cloudChatId = response.id;
+            console.log(this.cloudChatId);
+          }
+          break;
+        }
+        case 'updateNewChannelMessage': {
+          break;
+        }
+        case 'updateChatLastMessage': {
+          console.log(response.last_message.content.text && response.last_message.content.text.text)
           break;
         }
       }

@@ -9,7 +9,6 @@ if (cluster.isMaster) {
   const client = new Client(worker);
   const app = new App(client, worker);
 
-  // start
   worker.on('message', (response) => {
     if (response) {
       worker.send('');
