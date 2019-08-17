@@ -142,7 +142,7 @@ class Client {
     });
   }
 
-  inputFileLocal = path => ({
+  inputFileLocal = (path) => ({
     '@type': 'inputFileLocal',
     path,
   });

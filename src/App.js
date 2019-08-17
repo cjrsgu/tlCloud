@@ -114,6 +114,9 @@ class App {
         );
         break;
       }
+      default: {
+        break;
+      }
     }
   };
 
@@ -158,6 +161,9 @@ class App {
         }
         case 'updateChatLastMessage': {
           console.log(response.last_message.content.text && response.last_message.content.text.text)
+          break;
+        }
+        default: {
           break;
         }
       }
