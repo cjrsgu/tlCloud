@@ -28,6 +28,7 @@ class App {
         // this.readline.question("Enter path to folder: ", (path) => {
         //   console.log('Your path:', path);
         //   this.pathToFolder = path;
+        //    this.fileController = new FileController(this.pathToFolder)
         // });
 
         // this.readline.question("Create new channel? y/n ", (answer) => {
