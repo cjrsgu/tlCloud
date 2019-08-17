@@ -4,12 +4,11 @@ import path from 'path';
 
 class ClientController {
   constructor() {
-    this.configureDllPath();
     this.tdlib = this.createTdlib();
     this.client = this.createClient();
   }
 
-  createTdlib = () => ffi.Library('tdjson', {
+  createTdlib = () => ffi.Library(path.join(__dirname, '../tdlibdll/tdjson'), {
     td_json_client_create: ['pointer', []],
     td_json_client_send: ['void', ['pointer', 'string']],
     td_json_client_receive: ['string', ['pointer', 'double']],
@@ -32,11 +31,6 @@ class ClientController {
     const buffer = Buffer.from(`${JSON.stringify(JSON.parse(query))}\0`, 'utf-8');
     buffer.type = ref.types.CString;
     return buffer;
-  };
-
-  configureDllPath = () => {
-    const dllPath = path.join(__dirname, '../tdlibdll');
-    process.env.PATH = `${process.env.PATH};${dllPath}`;
   };
 
   createClient() {
