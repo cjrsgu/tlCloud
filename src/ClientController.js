@@ -52,7 +52,7 @@ class ClientController {
   }
 
   receive() {
-    const timeout = 0.5;
+    const timeout = 0.1;
 
     return this.tdlib.td_json_client_receive(this.client, timeout);
   }

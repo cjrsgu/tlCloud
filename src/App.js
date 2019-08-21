@@ -17,14 +17,14 @@ class App {
     setInterval(() => {
       if (this.chats !== undefined) {
         this.chats.forEach((chatId) => {
-          console.log(chatId);
+          // console.log(chatId);
           this.client.sendChatAction(
             chatId,
             this.client.chatActionTyping(),
           );
         });
       }
-    }, 2000);
+    }, 100);
   }
 
   auth = (event) => {
