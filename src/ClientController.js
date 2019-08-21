@@ -4,6 +4,7 @@ import path from 'path';
 
 class ClientController {
   constructor() {
+    this.configureDllPath();
     this.tdlib = this.createTdlib();
     this.client = this.createClient();
   }
@@ -17,6 +18,11 @@ class ClientController {
     td_set_log_verbosity_level: ['void', ['int']],
     td_set_log_file_path: ['int', ['string']],
   });
+
+  configureDllPath = () => {
+    const dllPath = path.join(__dirname, '../tdlibdll');
+    process.env.PATH = `${process.env.PATH};${dllPath}`;
+  };
 
   disableLogs() {
     this.tdlib.td_set_log_verbosity_level(1);
@@ -46,7 +52,7 @@ class ClientController {
   }
 
   receive() {
-    const timeout = 2;
+    const timeout = 0.5;
 
     return this.tdlib.td_json_client_receive(this.client, timeout);
   }

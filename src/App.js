@@ -13,6 +13,18 @@ class App {
     });
     this.isAuthorizationStateReady = false;
     this.pathToFolder = '../cloud/';
+
+    setInterval(() => {
+      if (this.chats !== undefined) {
+        this.chats.forEach((chatId) => {
+          console.log(chatId);
+          this.client.sendChatAction(
+            chatId,
+            this.client.chatActionTyping(),
+          );
+        });
+      }
+    }, 2000);
   }
 
   auth = (event) => {
@@ -38,11 +50,12 @@ class App {
         // });
 
         // this.client.createNewSupergroupChat('test', true, 'example');
-        // this.client.getChats(
-        //   '9223372036854775807',
-        //   '9223372036854775807',
-        //   100,
-        //   );
+        this.client.getChats(
+          '9223372036854775807',
+          '9223372036854775807',
+          200,
+        );
+
         // this.client.getGroupsInCommon(372112, 0, 10);
         // this.client.createNewSupergroupChat('cloud14', true, 'cloud14')
         // this.client.getChat(-1000010639255);
@@ -135,7 +148,8 @@ class App {
           break;
         }
         case 'chats': {
-          console.log(response.chat_ids)
+          console.log(response.chat_ids);
+          this.chats = response.chat_ids;
           break;
         }
         case 'chat': {
@@ -152,8 +166,8 @@ class App {
         }
         case 'updateNewChat': {
           if (response.chat === 'cloud') {
-            this.cloudChatId = response.id;
-            console.log(this.cloudChatId);
+            this.cloudChatId = response.id.slice();
+            // console.log(this.cloudChatId);
           }
           break;
         }

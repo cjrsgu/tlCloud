@@ -182,6 +182,18 @@ class Client {
       file_type: fileType,
     });
   }
+
+  sendChatAction(chatId, action) {
+    this.worker.send({
+      '@type': 'sendChatAction',
+      chat_id: chatId,
+      action,
+    });
+  }
+
+  chatActionTyping = () => ({
+    '@type': 'chatActionTyping',
+  });
 }
 
 export default Client;
